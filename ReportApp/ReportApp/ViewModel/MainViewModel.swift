@@ -9,7 +9,18 @@ import Foundation
 import SwiftUI
 
 class MainViewModel: ObservableObject {
-    @Published var reportList: [ReportContent] = []
+    private static var reportDetail:[ReportDetail] = [
+        ReportDetail(id: 1, content: "完成relay閃燈控制", imgPath: ""),
+        ReportDetail(id: 2, content: "找到物理喇叭撥放法", imgPath: ""),
+        ReportDetail(id: 3, content: "音量控制", imgPath: ""),
+        ReportDetail(id: 4, content: "正常播放音檔", imgPath: ""),
+    ]
+    
+    @Published var reportList: [ReportContent] = [
+        ReportContent(id: 1, dateTime: "2022-12-08", reportDetail: reportDetail),
+        ReportContent(id: 2, dateTime: "2022-02-10", reportDetail: reportDetail),
+        ReportContent(id: 3, dateTime: "2022-02-07", reportDetail: reportDetail)
+    ]
     @Published var isLogout = false
     @Published var isLoading = false
     @Published var isError = false

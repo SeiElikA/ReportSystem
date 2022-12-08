@@ -12,7 +12,7 @@ struct ReportAppApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                if UserDefaults.standard.bool(forKey: "isLogin") {
+                if !UserDefaults.standard.bool(forKey: "isLogin") {
                     ContentView()
                 } else {
                     LoginView()

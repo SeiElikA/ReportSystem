@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct ReportContent: Decodable {
+struct ReportContent: Decodable, Identifiable, Equatable {
     var id: Int
     var dateTime: String
     var reportDetail: [ReportDetail]
 }
 
-struct ReportDetail: Decodable {
+struct ReportDetail: Decodable, Equatable {
     var id: Int
     var content: String
     var imgPath: String

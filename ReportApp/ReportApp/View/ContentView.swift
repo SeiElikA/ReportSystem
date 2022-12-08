@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var model = MainViewModel()
+    let dateformatter = DateFormatter()
     
     var body: some View {
         ZStack {
@@ -25,7 +26,64 @@ struct ContentView: View {
             } else {
                 List {
                     ForEach(model.reportList, id: \.id) { report in
-                        
+                        HStack(alignment: .top, spacing: 8) {
+                            VStack(spacing: 0) {
+                                if(report.dateTime == dateformatter.string(from: .now)) {
+                                    Circle()
+                                        .strokeBorder(.black, lineWidth: 3)
+                                        .frame(width: 32, height: 32)
+                                        .overlay(Circle()
+                                            .fill(.black)
+                                            .frame(width: 24, height: 24))
+                                } else {
+                                    Circle()
+                                        .strokeBorder(.black, lineWidth: 3)
+                                        .frame(width: 32, height: 32)
+                                }
+                                
+                                if(model.reportList.firstIndex(where: {$0 == report}) != model.reportList.count - 1) {
+                                    Rectangle()
+                                        .frame(maxWidth: 4, maxHeight: .infinity)
+                                } else {
+                                    Rectangle()
+                                        .fill(.clear)
+                                        .frame(maxWidth: 4, maxHeight: .infinity)
+                                }
+                            }
+                            
+                            VStack(alignment: .leading) {
+                                Text(report.dateTime)
+                                    .font(.title2)
+                                    .frame(height: 32)
+                                
+                                HStack {
+                                    Text(report.reportDetail.prefix(4).map({ detail in
+                                        let index = report.reportDetail.firstIndex(where: {$0 == detail}) ?? 0
+                                        
+                                        return "\(index+1). \(detail.content)"
+                                    }).joined(separator: "\n"))
+                                    
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .frame(maxWidth: .infinity)
+                                .background(Color("Gray"))
+                                .cornerRadius(12)
+                                
+                                HStack {
+                                    Spacer()
+                                    Text("more >>")
+                                        .font(.caption)
+                                        .padding(.trailing, 8)
+                                    
+                                }
+                            }
+                            
+                        }
+                        .padding(.top, -10)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
                     }
                 }
             }
@@ -33,9 +91,10 @@ struct ContentView: View {
             NavigationLink("", destination: LoginView(), isActive: $model.isLogout)
         }
         .onAppear {
-            model.fetchReportRecord()
+            //model.fetchReportRecord()
+            dateformatter.dateFormat = "yyyy-MM-dd"
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.grouped)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(trailing: HStack {
             Button(action: {
@@ -55,8 +114,8 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationView(content: {
             ContentView()
-        }
+        })
     }
 }
