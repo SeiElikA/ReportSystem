@@ -62,7 +62,7 @@ class SignUpModel: ObservableObject {
             if let response = response as? HTTPURLResponse {
                 if(response.statusCode == 200) {
                     let result = try? JSONDecoder().decode(Response.self, from: data)
-                    if let result = result {
+                    if result != nil {
                         DispatchQueue.main.async {
                             self.successfulMsg = "Register Successful"
                             self.isSuccessful = true

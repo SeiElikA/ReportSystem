@@ -11,6 +11,9 @@ struct ReportContent: Decodable, Identifiable, Equatable {
     var id: Int
     var dateTime: String
     var reportDetail: [ReportDetail]
+    var yearMonth:String?
+    var day: String?
+    var dateValue: Date?
 }
 
 struct ReportDetail: Decodable, Equatable {

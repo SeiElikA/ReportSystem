@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var model = MainViewModel()
-    let dateformatter = DateFormatter()
     
     var body: some View {
         ZStack {
@@ -28,21 +27,22 @@ struct ContentView: View {
                     ForEach(model.reportList, id: \.id) { report in
                         HStack(alignment: .top, spacing: 8) {
                             VStack(spacing: 0) {
-                                if(report.dateTime == dateformatter.string(from: .now)) {
+                                if(report.dateTime == model.todayString) {
                                     Circle()
-                                        .strokeBorder(.black, lineWidth: 3)
+                                        .strokeBorder(Color("LightRed"), lineWidth: 3)
                                         .frame(width: 32, height: 32)
                                         .overlay(Circle()
-                                            .fill(.black)
-                                            .frame(width: 24, height: 24))
+                                            .fill(Color("LightRed"))
+                                            .frame(width: 18, height: 18))
                                 } else {
                                     Circle()
-                                        .strokeBorder(.black, lineWidth: 3)
+                                        .strokeBorder(.gray.opacity(0.3), lineWidth: 3)
                                         .frame(width: 32, height: 32)
                                 }
                                 
                                 if(model.reportList.firstIndex(where: {$0 == report}) != model.reportList.count - 1) {
                                     Rectangle()
+                                        .fill(.gray.opacity(0.3))
                                         .frame(maxWidth: 4, maxHeight: .infinity)
                                 } else {
                                     Rectangle()
@@ -91,8 +91,7 @@ struct ContentView: View {
             NavigationLink("", destination: LoginView(), isActive: $model.isLogout)
         }
         .onAppear {
-            //model.fetchReportRecord()
-            dateformatter.dateFormat = "yyyy-MM-dd"
+            model.fetchReportRecord()
         }
         .listStyle(.grouped)
         .navigationBarBackButtonHidden(true)

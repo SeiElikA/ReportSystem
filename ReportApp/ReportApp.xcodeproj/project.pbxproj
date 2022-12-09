@@ -23,6 +23,7 @@
 		6F82625F2941F3540031846D /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F82625E2941F3540031846D /* UserData.swift */; };
 		6F8262612941F86D0031846D /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8262602941F86D0031846D /* MainViewModel.swift */; };
 		6F8262632941F93C0031846D /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8262622941F93C0031846D /* Report.swift */; };
+		6FFA51B129430E1500BCAE67 /* AddReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFA51B029430E1500BCAE67 /* AddReportView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		6F82625E2941F3540031846D /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		6F8262602941F86D0031846D /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		6F8262622941F93C0031846D /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
+		6FFA51B029430E1500BCAE67 /* AddReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReportView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +103,7 @@
 				6F8262482941D9340031846D /* LoginView.swift */,
 				6F82623C2941D0FE0031846D /* ContentView.swift */,
 				6F82624E2941DFE80031846D /* SignUpView.swift */,
+				6FFA51B029430E1500BCAE67 /* AddReportView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -205,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FFA51B129430E1500BCAE67 /* AddReportView.swift in Sources */,
 				6F82624D2941DA130031846D /* LoginViewModel.swift in Sources */,
 				6F82624F2941DFE80031846D /* SignUpView.swift in Sources */,
 				6F8262492941D9340031846D /* LoginView.swift in Sources */,

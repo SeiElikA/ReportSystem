@@ -9,22 +9,20 @@ import Foundation
 import SwiftUI
 
 class MainViewModel: ObservableObject {
-    private static var reportDetail:[ReportDetail] = [
-        ReportDetail(id: 1, content: "完成relay閃燈控制", imgPath: ""),
-        ReportDetail(id: 2, content: "找到物理喇叭撥放法", imgPath: ""),
-        ReportDetail(id: 3, content: "音量控制", imgPath: ""),
-        ReportDetail(id: 4, content: "正常播放音檔", imgPath: ""),
-    ]
+    private static var reportDetail:[ReportDetail] = []
     
-    @Published var reportList: [ReportContent] = [
-        ReportContent(id: 1, dateTime: "2022-12-08", reportDetail: reportDetail),
-        ReportContent(id: 2, dateTime: "2022-02-10", reportDetail: reportDetail),
-        ReportContent(id: 3, dateTime: "2022-02-07", reportDetail: reportDetail)
-    ]
+    @Published var todayString = ""
+    @Published var reportList: [ReportContent] = []
     @Published var isLogout = false
     @Published var isLoading = false
     @Published var isError = false
     @Published var errorMsg = ""
+    
+    init() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        todayString = dateFormatter.string(from: Date.now)
+    }
     
     public func logoutEvent() {
         UserDefaults.standard.removeObject(forKey: "email")
@@ -53,6 +51,11 @@ class MainViewModel: ObservableObject {
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
         URLSession.shared.dataTask(with: request, completionHandler: { data ,response , error in
             guard let data = data else {
+                DispatchQueue.main.async {
+                    withAnimation {
+                        self.isLoading = false
+                    }
+                }
                 return
             }
             
@@ -63,7 +66,20 @@ class MainViewModel: ObservableObject {
                         DispatchQueue.main.async {
                             // save user data
                             withAnimation {
-                                self.reportList = result
+                                self.reportList = result.map({ content in
+                                    var reportContent = ReportContent(id: content.id, dateTime: content.dateTime, reportDetail: content.reportDetail)
+                                    let dateFormatter = DateFormatter()
+                                    dateFormatter.dateFormat = "yyyy-MM-dd"
+                                    let date = dateFormatter.date(from: content.dateTime) ?? Date()
+                                    let day = Calendar.current.component(.day, from: date)
+                                    let year = Calendar.current.component(.year, from: date)
+                                    let month = Calendar.current.component(.month, from: date)
+                                    reportContent.dateValue = date
+                                    reportContent.day = "\(day)"
+                                    reportContent.yearMonth = "\(year)-\(month)"
+                                    return reportContent
+                                })
+                                self.isLoading = false
                             }
                         }
                     }
@@ -73,6 +89,7 @@ class MainViewModel: ObservableObject {
                         DispatchQueue.main.async {
                             self.errorMsg = result.error
                             self.isError = true
+                            self.isLoading = false
                         }
                     }
                 }

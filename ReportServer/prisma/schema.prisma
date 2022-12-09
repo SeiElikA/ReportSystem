@@ -20,7 +20,7 @@ model Account {
 
 model ReportContent {
     id Int @id @default(autoincrement())
-    dateTime DateTime @default(now())
+    dateTime String
     accountId Int
 
     reportDetail ReportDetail[]
