@@ -11,7 +11,7 @@ struct LoginView: View {
     @StateObject private var model = LoginViewModel()
     
     var body: some View {
-        VStack {
+        ZStack {
             ZStack {
                 List {
                     Group {
@@ -20,7 +20,7 @@ struct LoginView: View {
                         })
                         .autocapitalization(.none)
                         
-                        TextField(text: $model.password, label: {
+                        SecureField(text: $model.password, label: {
                             Text("Password")
                         })
                         .autocapitalization(.none)
@@ -46,6 +46,18 @@ struct LoginView: View {
                 }
                 
                 NavigationLink("", destination: ContentView(), isActive: $model.isLogin)
+                
+         
+            }
+            
+            if model.isLoading {
+                ZStack {
+                    Color.black.opacity(0.4)
+                    
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                }
+                .ignoresSafeArea()
             }
         }
         .navigationBarBackButtonHidden(true)

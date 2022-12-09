@@ -112,6 +112,21 @@ app.post('/api/sendReport', async (req, res) => {
         })
         return
     }
+
+    let existReport = await prisma.reportContent.findFirst({
+        where: {
+            accountId: id,
+            dateTime: moment().format("yyyy-MM-dd")
+        }
+    })
+
+    if(existReport != null) {
+        res.status(400).send({
+            "error": "Today's report was send"
+        })
+        return
+    }
+
     let reportContent = await prisma.reportContent.create({
         data: {
             accountId: id,
@@ -138,7 +153,7 @@ app.post('/api/sendReport', async (req, res) => {
 
 setInterval(async () => {
     if(moment().format("HH:mm") == "23:00") {
-        let dataList = (await prisma.reportContent.findMany({
+        let list = (await prisma.reportContent.findMany({
             where: {
                 dateTime: moment().format("yyyy-MM-DD")
             },
@@ -151,13 +166,23 @@ setInterval(async () => {
                 account: true,
                 reportDetail: true
             }
-        })).map(x => {
+        }))
+        let dataList = list.map(x => {
             return {
                 "name": x.account.name,
                 "value": x.reportDetail.map(z=>z.content).join("\n"),
                 "inline": false
             }
         })
+
+        list.sort(x=>x.reportDetail.length)
+
+        dataList.push({
+            "name": "**本日進度最低**",
+            "value": `**${list[list.length - 1].account.name}**`,
+            "inline": false
+        })
+
         await discordClient.execute({
             "embeds": [
                 {

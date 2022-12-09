@@ -17,6 +17,7 @@ class MainViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var isError = false
     @Published var errorMsg = ""
+    @Published var isLogoutAlert = false
     
     init() {
         let dateFormatter = DateFormatter()
@@ -67,13 +68,15 @@ class MainViewModel: ObservableObject {
                             // save user data
                             withAnimation {
                                 self.reportList = result.map({ content in
-                                    var reportContent = ReportContent(id: content.id, dateTime: content.dateTime, reportDetail: content.reportDetail)
                                     let dateFormatter = DateFormatter()
                                     dateFormatter.dateFormat = "yyyy-MM-dd"
+                                    
                                     let date = dateFormatter.date(from: content.dateTime) ?? Date()
                                     let day = Calendar.current.component(.day, from: date)
                                     let year = Calendar.current.component(.year, from: date)
                                     let month = Calendar.current.component(.month, from: date)
+                                    
+                                    var reportContent = ReportContent(id: content.id, dateTime: content.dateTime, reportDetail: content.reportDetail)
                                     reportContent.dateValue = date
                                     reportContent.day = "\(day)"
                                     reportContent.yearMonth = "\(year)-\(month)"

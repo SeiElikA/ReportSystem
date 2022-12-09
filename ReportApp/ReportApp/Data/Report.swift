@@ -16,7 +16,7 @@ struct ReportContent: Decodable, Identifiable, Equatable {
     var dateValue: Date?
 }
 
-struct ReportDetail: Decodable, Equatable {
+struct ReportDetail: Decodable, Equatable,Identifiable {
     var id: Int
     var content: String
     var imgPath: String

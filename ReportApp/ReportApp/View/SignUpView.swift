@@ -12,7 +12,7 @@ struct SignUpView: View {
     @Environment(\.presentationMode) var mode
     
     var body: some View {
-        VStack {
+        ZStack {
             ZStack {
                 List {
                     Group {
@@ -50,6 +50,16 @@ struct SignUpView: View {
                     }
                 }
                 .listStyle(.insetGrouped)
+            }
+            
+            if model.isLoading {
+                ZStack {
+                    Color.black.opacity(0.4)
+                    
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                }
+                .ignoresSafeArea()
             }
         }
         .navigationBarTitleDisplayMode(.large)
