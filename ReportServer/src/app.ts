@@ -116,9 +116,11 @@ app.post('/api/sendReport', async (req, res) => {
     let existReport = await prisma.reportContent.findFirst({
         where: {
             accountId: id,
-            dateTime: moment().format("yyyy-MM-dd")
+            dateTime: moment().format("yyyy-MM-DD")
         }
     })
+
+    console.log(moment().format("yyyy-MM-DD"));
 
     if(existReport != null) {
         res.status(400).send({

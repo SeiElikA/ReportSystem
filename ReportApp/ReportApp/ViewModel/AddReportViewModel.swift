@@ -75,8 +75,8 @@ class AddReportViewModel: ObservableObject {
                             self.isSuccessful = true
                             withAnimation {
                                 self.isLoading = false
+                                self.isBack = true
                             }
-                            self.isBack = true
                         }
                     }
                 } else {
