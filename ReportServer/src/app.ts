@@ -192,6 +192,11 @@ app.post('/api/uploadImg',  async (req, res) => {
     })
 })
 
+app.get('/api/getAllImage', async (req, res) => {
+    let imgDetailList = await prisma.imageDetail.findMany()
+    res.send(imgDetailList)
+})
+
 async function saveImg(reportId: number, x: UploadedFile) {
     let newPath = imgStorage + `/${randomUUID()}.jpg`
 
@@ -267,8 +272,6 @@ setInterval(async () => {
     }
 
 }, 55 * 1000)
-
-
 
 app.listen(port, () => {
     console.log(`server is listening on ${port}`);
