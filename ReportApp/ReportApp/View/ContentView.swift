@@ -15,67 +15,7 @@ struct ContentView: View {
             ZStack {
                 List {
                     ForEach(model.reportList, id: \.id) { report in
-                        NavigationLink(destination: ReportDetailView(reportContent: report), label: {
-                            HStack(alignment: .top, spacing: 8) {
-                                VStack(spacing: 0) {
-                                    if(report.dateTime == model.todayString) {
-                                        Circle()
-                                            .strokeBorder(Color("LightRed"), lineWidth: 3)
-                                            .frame(width: 28, height: 28)
-                                            .overlay(Circle()
-                                                .fill(Color("LightRed"))
-                                                .frame(width: 18, height: 18))
-                                    } else {
-                                        Circle()
-                                            .strokeBorder(.gray.opacity(0.3), lineWidth: 3)
-                                            .frame(width: 28, height: 28)
-                                    }
-                                    
-                                    if(model.reportList.firstIndex(of: report) != model.reportList.count - 1) {
-                                        Rectangle()
-                                            .fill(.gray.opacity(0.3))
-                                            .frame(maxWidth: 4, maxHeight: .infinity)
-                                    } else {
-                                        Rectangle()
-                                            .fill(.clear)
-                                            .frame(maxWidth: 4, maxHeight: .infinity)
-                                    }
-                                }
-                                
-                                VStack(alignment: .leading) {
-                                    Text(report.dateTime)
-                                        .font(.title2)
-                                        .frame(height: 32)
-                                    
-                                    HStack {
-                                        if(report.reportDetail.count > 4) {
-                                            Text(report.reportDetail.prefix(4).map({ detail in
-                                                let index = report.reportDetail.firstIndex(of: detail) ?? 0
-                                                
-                                                return "\(index+1). \(detail.content)"
-                                            }).joined(separator: "\n") + "\n ...")
-                                        } else {
-                                            Text(report.reportDetail.map({ detail in
-                                                let index = report.reportDetail.firstIndex(of: detail) ?? 0
-                                                
-                                                return "\(index+1). \(detail.content)"
-                                            }).joined(separator: "\n"))
-                                        }
-                                        
-                                        Spacer()
-                                    }
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                    .frame(maxWidth: .infinity)
-                                    .background(Color("Gray"))
-                                    .cornerRadius(12)
-                                }
-                                
-                            }
-                            .padding(.top, -10)
-                        })
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
+                        listItemView(report: report)
                     }
                 }
                 .refreshable(action: {
@@ -88,6 +28,7 @@ struct ContentView: View {
                             .resizable()
                             .scaledToFit()
                             .padding(.horizontal, 52)
+                            .padding(.bottom)
                         
                         Text("Click add button to \nrecord a new report today")
                             .font(.system(.headline))
@@ -97,9 +38,6 @@ struct ContentView: View {
                 
                 NavigationLink("", destination: LoginView(), isActive: $model.isLogout)
             }
-            .refreshable(action: {
-                model.fetchReportRecord()
-            })
             .onAppear {
                 model.fetchReportRecord()
             }
@@ -133,7 +71,7 @@ struct ContentView: View {
             
             if model.isLoading {
                 ZStack {
-                    Color.black.opacity(0.4)
+                    Color("Loading").opacity(0.4)
                     
                     ProgressView()
                         .progressViewStyle(.circular)
@@ -141,6 +79,89 @@ struct ContentView: View {
                 .ignoresSafeArea()
             }
         }
+    }
+    
+    private func listItemView(report: ReportContent) -> some View {
+        NavigationLink(destination: ReportDetailView(reportContent: report), label: {
+            HStack(alignment: .top, spacing: 8) {
+                VStack(spacing: 0) {
+                    if(report.dateTime == model.todayString) {
+                        Circle()
+                            .strokeBorder(Color("LightRed"), lineWidth: 3)
+                            .frame(width: 28, height: 28)
+                            .overlay(Circle()
+                                .fill(Color("LightRed"))
+                                .frame(width: 18, height: 18))
+                    } else {
+                        Circle()
+                            .strokeBorder(.gray.opacity(0.3), lineWidth: 3)
+                            .frame(width: 28, height: 28)
+                    }
+                    
+                    if(model.reportList.firstIndex(of: report) != model.reportList.count - 1) {
+                        Rectangle()
+                            .fill(.gray.opacity(0.3))
+                            .frame(maxWidth: 4, maxHeight: .infinity)
+                    } else {
+                        Rectangle()
+                            .fill(.clear)
+                            .frame(maxWidth: 4, maxHeight: .infinity)
+                    }
+                }
+                
+                VStack(alignment: .leading) {
+                    Text(report.dateTime)
+                        .font(.title2)
+                        .frame(height: 32)
+                    
+                    HStack {
+                        if(report.reportDetail.count > 4) {
+                            Text(report.reportDetail.prefix(4).map({ detail in
+                                let index = report.reportDetail.firstIndex(of: detail) ?? 0
+                                
+                                return "\(index+1). \(detail.content)"
+                            }).joined(separator: "\n") + "\n ...")
+                        } else {
+                            Text(report.reportDetail.map({ detail in
+                                let index = report.reportDetail.firstIndex(of: detail) ?? 0
+                                
+                                return "\(index+1). \(detail.content)"
+                            }).joined(separator: "\n"))
+                        }
+                        
+                        Spacer()
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: .infinity)
+                    .background(Color("Gray"))
+                    .cornerRadius(12)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(report.imageDetail) { imgDetail in
+                                AsyncImage(url: URL(string: Global.baseUrl + imgDetail.imgPath)!, content: { img in
+                                    img
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 52, height: 52)
+                                        .cornerRadius(4)
+                                }, placeholder: {
+                                    Rectangle()
+                                        .fill(Color("Gray"))
+                                        .frame(width: 52, height: 52)
+                                        .overlay(ProgressView())
+                                        .cornerRadius(4)
+                                })
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(.top, -10)
+        })
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
     }
 }
 

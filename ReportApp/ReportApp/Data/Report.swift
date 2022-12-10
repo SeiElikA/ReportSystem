@@ -11,6 +11,7 @@ struct ReportContent: Decodable, Identifiable, Equatable {
     var id: Int
     var dateTime: String
     var reportDetail: [ReportDetail]
+    var imageDetail: [ImageDetail]
     var yearMonth:String?
     var day: String?
     var dateValue: Date?
@@ -19,5 +20,10 @@ struct ReportContent: Decodable, Identifiable, Equatable {
 struct ReportDetail: Decodable, Equatable,Identifiable {
     var id: Int
     var content: String
+}
+
+struct ImageDetail: Decodable, Equatable,Identifiable {
+    var id: Int
     var imgPath: String
 }
+

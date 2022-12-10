@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct SignUpView: View {
     @StateObject private var model = SignUpModel()
@@ -54,8 +55,8 @@ struct SignUpView: View {
             
             if model.isLoading {
                 ZStack {
-                    Color.black.opacity(0.4)
-                    
+                    Color("Loading").opacity(0.4)
+
                     ProgressView()
                         .progressViewStyle(.circular)
                 }

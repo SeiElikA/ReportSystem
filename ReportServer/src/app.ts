@@ -4,14 +4,25 @@ import {PrismaClient} from '@prisma/client'
 import {Report} from "./report";
 import DiscordWebhook from 'discord-webhook-ts';
 import moment from "moment";
+import fileUpload, {UploadedFile} from "express-fileupload";
+import {exists, existsSync, mkdirSync} from "fs";
+import * as fs from "fs";
+import {randomUUID} from "crypto";
 
 const app = express();
 const port = 3000;
 
 const prisma = new PrismaClient()
 const discordClient = new DiscordWebhook('https://discord.com/api/webhooks/1050020644718399510/kw40GWB45Az-Ynzik1CQzHmpisUDflZyzdh4UUSeFh7AQ_8TLJyMa6jkMafe0682cYVQ');
+const imgStorage = "img"
 
+app.use('/api/img', express.static(imgStorage));
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : '/tmp/'
+}));
 app.use(express.json())
+
 
 app.get('/', (req, res) => {
     res.send('<h1>Report Server</h1>');
@@ -95,7 +106,8 @@ app.post('/api/getReport', async (req, res) => {
         select: {
             id: true,
             dateTime: true,
-            reportDetail: true
+            reportDetail: true,
+            imageDetail: true
         }
     })
 
@@ -120,8 +132,6 @@ app.post('/api/sendReport', async (req, res) => {
         }
     })
 
-    console.log(moment().format("yyyy-MM-DD"));
-
     if(existReport != null) {
         res.status(400).send({
             "error": "Today's report was send"
@@ -142,16 +152,58 @@ app.post('/api/sendReport', async (req, res) => {
         await prisma.reportDetail.create({
             data: {
                 content: x.content ?? "",
-                imgPath: x.imgPath ?? "",
                 reportContentId: reportContentId
             }
         })
     }
 
     res.send({
+        "reportId": reportContentId
+    })
+})
+
+app.post('/api/uploadImg',  async (req, res) => {
+    let reportId = parseInt(req.query.reportId as string)
+    let imgFile = req.files?.image as [UploadedFile]
+
+    if (imgFile == null) {
+        res.status(400).send({
+            "error": "upload image can't empty"
+        })
+        return
+    }
+
+    if (!existsSync(imgStorage)) {
+        mkdirSync(imgStorage)
+    }
+
+    try {
+        for (const x of imgFile) {
+            await saveImg(reportId, x)
+        }
+    } catch (e) {
+        let imgFile1 = req.files?.image as UploadedFile
+        await saveImg(reportId, imgFile1)
+    }
+
+
+    res.status(200).send({
         "success": true
     })
 })
+
+async function saveImg(reportId: number, x: UploadedFile) {
+    let newPath = imgStorage + `/${randomUUID()}.jpg`
+
+    await prisma.imageDetail.create({
+        data: {
+            imgPath: newPath,
+            reportContentId: reportId
+        }
+    })
+
+    fs.rename(x.tempFilePath, newPath, (err) => {})
+}
 
 setInterval(async () => {
     if(moment().format("HH:mm") == "23:00") {
@@ -169,6 +221,24 @@ setInterval(async () => {
                 reportDetail: true
             }
         }))
+
+        if(list.length == 0) {
+            await discordClient.execute({
+                "embeds": [
+                    {
+                        "title": `${moment().format("yyyy/MM/DD")}今日進度`,
+                        "color": 15258703,
+                        "fields": {
+                            "name": "全部人",
+                            "value": "都沒進度",
+                            "inline": false
+                        }
+                    }
+                ]
+            })
+            return
+        }
+
         let dataList = list.map(x => {
             return {
                 "name": x.account.name,
@@ -197,6 +267,8 @@ setInterval(async () => {
     }
 
 }, 55 * 1000)
+
+
 
 app.listen(port, () => {
     console.log(`server is listening on ${port}`);

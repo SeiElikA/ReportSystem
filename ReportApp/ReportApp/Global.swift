@@ -8,5 +8,6 @@
 import Foundation
 
 class Global {
-    public static let baseUrl = "http://192.168.100.145:3000/api/"
+    //public static let baseUrl = "http://192.168.100.145:3000/api/"
+    public static let baseUrl = "http://192.168.0.185:3000/api/"
 }

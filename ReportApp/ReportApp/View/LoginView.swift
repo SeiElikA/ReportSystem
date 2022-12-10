@@ -52,8 +52,8 @@ struct LoginView: View {
             
             if model.isLoading {
                 ZStack {
-                    Color.black.opacity(0.4)
-                    
+                    Color("Loading").opacity(0.4)
+
                     ProgressView()
                         .progressViewStyle(.circular)
                 }

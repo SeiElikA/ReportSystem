@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct AddReportView: View {
     @StateObject private var model = AddReportViewModel()
@@ -24,13 +25,45 @@ struct AddReportView: View {
                 }
             })
             
-            Section("Add Item", content: {
+            Section("Add work item", content: {
                 TextField("Input...", text: $model.input)
                     .autocapitalization(.none)
                 
                 Button("Add Work Item", action: model.addWorkItemEvent)
             })
-            Section {
+            
+            Section("Add work image", content: {
+                if(!model.imageList.isEmpty) {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(model.imageList, id: \.self) { imgData in
+                                ZStack(alignment: .topTrailing) {
+                                    Image(uiImage: UIImage(data: imgData)!)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 200, height: 200)
+                                        .cornerRadius(8)
+                                    
+                                    Button(action: {
+                                        withAnimation {
+                                            model.imageList.removeAll(where: {$0 == imgData})
+                                        }
+                                    }, label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .font(.system(size: 24))
+                                            .foregroundColor(.red)
+                                    })
+                                    .padding(12)
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                PhotosPicker("Add Work Image", selection: $model.selectImageItem, matching: .any(of: [.images]))
+            })
+            
+            Section(header: Text(""), footer: Text("You can't edit it after send report").foregroundColor(.red)) {
                 if model.isLoading {
                     HStack {
                         ProgressView()
@@ -51,6 +84,17 @@ struct AddReportView: View {
         .onChange(of: model.isBack, perform: {
             if($0) {
                 mode.wrappedValue.dismiss()
+            }
+        })
+        .onChange(of: model.selectImageItem, perform: { item in
+            Task {
+                if let data = try? await item?.loadTransferable(type: Data.self) {
+                    DispatchQueue.main.async {
+                        withAnimation {
+                            model.imageList.append(data)
+                        }
+                    }
+                }
             }
         })
     }

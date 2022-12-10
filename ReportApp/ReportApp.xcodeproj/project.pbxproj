@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F6593D12944CBD800DCE068 /* ReportResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6593D02944CBD800DCE068 /* ReportResponse.swift */; };
 		6F82623B2941D0FE0031846D /* ReportAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F82623A2941D0FE0031846D /* ReportAppApp.swift */; };
 		6F82623D2941D0FE0031846D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F82623C2941D0FE0031846D /* ContentView.swift */; };
 		6F82623F2941D1000031846D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F82623E2941D1000031846D /* Assets.xcassets */; };
@@ -30,6 +31,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6F6593D02944CBD800DCE068 /* ReportResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportResponse.swift; sourceTree = "<group>"; };
 		6F8262372941D0FE0031846D /* ReportApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReportApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F82623A2941D0FE0031846D /* ReportAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportAppApp.swift; sourceTree = "<group>"; };
 		6F82623C2941D0FE0031846D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -84,7 +86,6 @@
 			isa = PBXGroup;
 			children = (
 				6F8262552941E3D20031846D /* Data */,
-				6F8262522941E17B0031846D /* Model */,
 				6F82624B2941DA080031846D /* ViewModel */,
 				6F82624A2941DA010031846D /* View */,
 				6F82623A2941D0FE0031846D /* ReportAppApp.swift */,
@@ -126,13 +127,6 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
-		6F8262522941E17B0031846D /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
 		6F8262552941E3D20031846D /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -143,6 +137,7 @@
 				6F82625E2941F3540031846D /* UserData.swift */,
 				6F8262622941F93C0031846D /* Report.swift */,
 				6F82626629432C800031846D /* SendReport.swift */,
+				6F6593D02944CBD800DCE068 /* ReportResponse.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -225,6 +220,7 @@
 				6F826265294320570031846D /* AddReportViewModel.swift in Sources */,
 				6F8262512941E0820031846D /* SignUpModel.swift in Sources */,
 				6F8262592941E5D80031846D /* Response.swift in Sources */,
+				6F6593D12944CBD800DCE068 /* ReportResponse.swift in Sources */,
 				6F8262612941F86D0031846D /* MainViewModel.swift in Sources */,
 				6F82623D2941D0FE0031846D /* ContentView.swift in Sources */,
 				6F82625F2941F3540031846D /* UserData.swift in Sources */,
@@ -371,7 +367,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -404,7 +400,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

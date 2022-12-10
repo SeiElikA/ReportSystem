@@ -9,7 +9,25 @@ import Foundation
 import SwiftUI
 
 class MainViewModel: ObservableObject {
-    private static var reportDetail:[ReportDetail] = []
+    public static var reportContent: [ReportContent] = [
+        ReportContent(id: 1, dateTime: "2022-02-02", reportDetail: [
+            ReportDetail(id: 1, content: "test"),
+            ReportDetail(id: 2, content: "test"),
+            ReportDetail(id: 3, content: "test"),
+            ReportDetail(id: 4, content: "test"),
+            ReportDetail(id: 5, content: "test")
+        ], imageDetail: [
+            ImageDetail(id: 1, imgPath: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.png"),
+            ImageDetail(id: 2, imgPath: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.png"),
+            ImageDetail(id: 3, imgPath: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.png"),
+        ]),
+        ReportContent(id: 2, dateTime: "2022-02-02", reportDetail: [
+            ReportDetail(id: 1, content: "test"),
+            ReportDetail(id: 2, content: "test"),
+            ReportDetail(id: 3, content: "test"),
+            ReportDetail(id: 4, content: "test")
+        ],imageDetail: [])
+    ]
     
     @Published var todayString = ""
     @Published var reportList: [ReportContent] = []
@@ -76,7 +94,7 @@ class MainViewModel: ObservableObject {
                                     let year = Calendar.current.component(.year, from: date)
                                     let month = Calendar.current.component(.month, from: date)
                                     
-                                    var reportContent = ReportContent(id: content.id, dateTime: content.dateTime, reportDetail: content.reportDetail)
+                                    var reportContent = ReportContent(id: content.id, dateTime: content.dateTime, reportDetail: content.reportDetail, imageDetail: content.imageDetail)
                                     reportContent.dateValue = date
                                     reportContent.day = "\(day)"
                                     reportContent.yearMonth = "\(year)-\(month)"

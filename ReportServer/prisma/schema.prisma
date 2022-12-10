@@ -24,13 +24,21 @@ model ReportContent {
     accountId Int
 
     reportDetail ReportDetail[]
+    imageDetail ImageDetail[]
     account Account @relation(fields: [accountId], references: [id])
 }
 
 model ReportDetail {
     id Int @id @default(autoincrement())
-    content String?
-    imgPath String?
+    content String
+    reportContentId Int
+
+    reportContent ReportContent @relation(fields: [reportContentId], references: [id])
+}
+
+model ImageDetail {
+    id Int @id @default(autoincrement())
+    imgPath String
     reportContentId Int
 
     reportContent ReportContent @relation(fields: [reportContentId], references: [id])

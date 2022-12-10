@@ -18,6 +18,31 @@ struct ReportDetailView: View {
                 })
             }
             
+            if !reportContent.imageDetail.isEmpty {
+                Section("Images") {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(reportContent.imageDetail) { imgDetail in
+                                AsyncImage(url: URL(string: Global.baseUrl + imgDetail.imgPath)!, content: { img in
+                                    img
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 200, height: 200)
+                                        .cornerRadius(8)
+                                }, placeholder: {
+                                    Rectangle()
+                                        .fill(Color("Gray"))
+                                        .frame(width: 200, height: 200)
+                                        .overlay(ProgressView())
+                                        .cornerRadius(8)
+                                })
+                            }
+                        }
+                    }
+                }
+            }
+            
+            
             Section("Date") {
                 Text(reportContent.dateTime.replacingOccurrences(of: "-", with: "."))
             }
@@ -31,12 +56,7 @@ struct ReportDetailView: View {
 struct ReportDetailView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            ReportDetailView(reportContent: (ReportContent(id: 1, dateTime: "2022-02-02", reportDetail: [
-                ReportDetail(id: 1, content: "test", imgPath: ""),
-                ReportDetail(id: 2, content: "test", imgPath: ""),
-                ReportDetail(id: 3, content: "test", imgPath: ""),
-                ReportDetail(id: 4, content: "test", imgPath: "")
-            ])))
+            ReportDetailView(reportContent: MainViewModel.reportContent.first!)
         }
     }
 }
