@@ -15,17 +15,15 @@ struct ContentView: View {
                     Text("Exist Account")
                 } icon: {
                     Image(systemName: "person.circle.fill")
-                        .foregroundColor(.white)
                 }
 
             })
             
-            NavigationLink(destination: AccountView(), label: {
+            NavigationLink(destination: ReportView(), label: {
                 Label {
                     Text("Report Record")
                 } icon: {
                     Image(systemName: "list.bullet.rectangle.portrait.fill")
-                        .foregroundColor(.white)
                 }
             })
             
@@ -34,7 +32,6 @@ struct ContentView: View {
                     Text("All Image")
                 } icon: {
                     Image(systemName: "photo.fill.on.rectangle.fill")
-                        .foregroundColor(.white)
                 }
             })
         }

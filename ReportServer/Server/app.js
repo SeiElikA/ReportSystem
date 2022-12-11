@@ -48,8 +48,7 @@ const app = (0, express_1.default)();
 const port = 3000;
 const prisma = new client_1.PrismaClient();
 const discordClient = new discord_webhook_ts_1.default('https://discord.com/api/webhooks/1050020644718399510/kw40GWB45Az-Ynzik1CQzHmpisUDflZyzdh4UUSeFh7AQ_8TLJyMa6jkMafe0682cYVQ');
-const imgStorage = "img";
-app.use('/api/img', express_1.default.static(imgStorage));
+const imgStorage = "./img";
 app.use((0, express_fileupload_1.default)({
     useTempFiles: true,
     tempFileDir: '/tmp/'
@@ -127,14 +126,13 @@ app.post('/api/getReport', (req, res) => __awaiter(void 0, void 0, void 0, funct
         select: {
             id: true,
             dateTime: true,
-            reportDetail: true,
-            imageDetail: true
+            reportDetail: true
         }
     });
     res.send(dataList);
 }));
 app.post('/api/sendReport', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     let dataList = req.body["data"];
     let id = req.body["accountId"];
     if (dataList == null || id == null) {
@@ -149,6 +147,7 @@ app.post('/api/sendReport', (req, res) => __awaiter(void 0, void 0, void 0, func
             dateTime: (0, moment_1.default)().format("yyyy-MM-DD")
         }
     });
+    console.log((0, moment_1.default)().format("yyyy-MM-DD"));
     if (existReport != null) {
         res.status(400).send({
             "error": "Today's report was send"
@@ -166,72 +165,39 @@ app.post('/api/sendReport', (req, res) => __awaiter(void 0, void 0, void 0, func
         yield prisma.reportDetail.create({
             data: {
                 content: (_a = x.content) !== null && _a !== void 0 ? _a : "",
+                imgPath: (_b = x.imgPath) !== null && _b !== void 0 ? _b : "",
                 reportContentId: reportContentId
             }
         });
     }
     res.send({
-        "reportId": reportContentId
+        "success": true
     });
 }));
 app.post('/api/uploadImg', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b, _c;
-    let reportId = parseInt(req.query.reportId);
-    let imgFile = (_b = req.files) === null || _b === void 0 ? void 0 : _b.image;
+    var _c;
+    let imgFile = (_c = req.files) === null || _c === void 0 ? void 0 : _c.image;
     if (imgFile == null) {
         res.status(400).send({
             "error": "upload image can't empty"
         });
         return;
     }
-    if (!(0, fs_1.existsSync)(imgStorage)) {
+    if ((0, fs_1.existsSync)(imgStorage)) {
         (0, fs_1.mkdirSync)(imgStorage);
     }
-    try {
-        for (const x of imgFile) {
-            yield saveImg(reportId, x);
+    let newPath = imgStorage + `/${(0, crypto_1.randomUUID)()}.jpg`;
+    fs.rename(imgFile.tempFilePath, newPath, (err) => {
+        if (err) {
+            res.status(500).send(err);
         }
-    }
-    catch (e) {
-        let imgFile1 = (_c = req.files) === null || _c === void 0 ? void 0 : _c.image;
-        yield saveImg(reportId, imgFile1);
-    }
-    res.status(200).send({
-        "success": true
-    });
-}));
-app.get('/api/getAllImage', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let imgDetailList = yield prisma.imageDetail.findMany();
-    res.send(imgDetailList);
-}));
-app.get('/api/getAllAccount', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let accountList = yield prisma.account.findMany();
-    res.send(accountList);
-}));
-app.get('/api/getAllReport', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let accountList = yield prisma.reportContent.findMany({
-        select: {
-            id: true,
-            dateTime: true,
-            account: true,
-            imageDetail: true,
-            reportDetail: true
+        else {
+            res.status(200).send({
+                "imgPath": newPath
+            });
         }
     });
-    res.send(accountList);
 }));
-function saveImg(reportId, x) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let newPath = imgStorage + `/${(0, crypto_1.randomUUID)()}.jpg`;
-        yield prisma.imageDetail.create({
-            data: {
-                imgPath: newPath,
-                reportContentId: reportId
-            }
-        });
-        fs.rename(x.tempFilePath, newPath, (err) => { });
-    });
-}
 setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     if ((0, moment_1.default)().format("HH:mm") == "23:00") {
         let list = (yield prisma.reportContent.findMany({
@@ -248,22 +214,6 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
                 reportDetail: true
             }
         }));
-        if (list.length == 0) {
-            yield discordClient.execute({
-                "embeds": [
-                    {
-                        "title": `${(0, moment_1.default)().format("yyyy/MM/DD")}今日進度`,
-                        "color": 15258703,
-                        "fields": {
-                            "name": "全部人",
-                            "value": "都沒進度",
-                            "inline": false
-                        }
-                    }
-                ]
-            });
-            return;
-        }
         let dataList = list.map(x => {
             return {
                 "name": x.account.name,

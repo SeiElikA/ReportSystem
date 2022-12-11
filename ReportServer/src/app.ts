@@ -197,6 +197,24 @@ app.get('/api/getAllImage', async (req, res) => {
     res.send(imgDetailList)
 })
 
+app.get('/api/getAllAccount', async (req, res) => {
+    let accountList = await prisma.account.findMany()
+    res.send(accountList)
+})
+
+app.get('/api/getAllReport', async (req, res) => {
+    let accountList = await prisma.reportContent.findMany({
+        select: {
+            id: true,
+            dateTime:true,
+            account:true,
+            imageDetail:true,
+            reportDetail:true
+        }
+    })
+    res.send(accountList)
+})
+
 async function saveImg(reportId: number, x: UploadedFile) {
     let newPath = imgStorage + `/${randomUUID()}.jpg`
 

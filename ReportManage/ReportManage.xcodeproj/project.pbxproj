@@ -16,6 +16,12 @@
 		6F6593F42944E25100DCE068 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6593F32944E25100DCE068 /* Global.swift */; };
 		6F6593F62944E34900DCE068 /* AllImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6593F52944E34900DCE068 /* AllImageViewModel.swift */; };
 		6F6593F92944E3BD00DCE068 /* ImageDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6593F82944E3BD00DCE068 /* ImageDetail.swift */; };
+		6F6593FB2945C22500DCE068 /* AccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6593FA2945C22500DCE068 /* AccountViewModel.swift */; };
+		6F6593FD2945C28400DCE068 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6593FC2945C28400DCE068 /* Account.swift */; };
+		6F6593FF2945C85A00DCE068 /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6593FE2945C85A00DCE068 /* ReportView.swift */; };
+		6F6594012945C86800DCE068 /* ReportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6594002945C86800DCE068 /* ReportViewModel.swift */; };
+		6F6594032945C8DF00DCE068 /* Report.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6594022945C8DF00DCE068 /* Report.swift */; };
+		6F6594052945C93600DCE068 /* ReportDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6594042945C93600DCE068 /* ReportDetail.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +36,12 @@
 		6F6593F32944E25100DCE068 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 		6F6593F52944E34900DCE068 /* AllImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllImageViewModel.swift; sourceTree = "<group>"; };
 		6F6593F82944E3BD00DCE068 /* ImageDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDetail.swift; sourceTree = "<group>"; };
+		6F6593FA2945C22500DCE068 /* AccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewModel.swift; sourceTree = "<group>"; };
+		6F6593FC2945C28400DCE068 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		6F6593FE2945C85A00DCE068 /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
+		6F6594002945C86800DCE068 /* ReportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewModel.swift; sourceTree = "<group>"; };
+		6F6594022945C8DF00DCE068 /* Report.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Report.swift; sourceTree = "<group>"; };
+		6F6594042945C93600DCE068 /* ReportDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportDetail.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +100,7 @@
 				6F6593E02944DF5A00DCE068 /* ContentView.swift */,
 				6F6593EE2944E1A800DCE068 /* AccountView.swift */,
 				6F6593F02944E23A00DCE068 /* AllImageView.swift */,
+				6F6593FE2945C85A00DCE068 /* ReportView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -96,6 +109,8 @@
 			isa = PBXGroup;
 			children = (
 				6F6593F52944E34900DCE068 /* AllImageViewModel.swift */,
+				6F6593FA2945C22500DCE068 /* AccountViewModel.swift */,
+				6F6594002945C86800DCE068 /* ReportViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -104,6 +119,9 @@
 			isa = PBXGroup;
 			children = (
 				6F6593F82944E3BD00DCE068 /* ImageDetail.swift */,
+				6F6593FC2945C28400DCE068 /* Account.swift */,
+				6F6594022945C8DF00DCE068 /* Report.swift */,
+				6F6594042945C93600DCE068 /* ReportDetail.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -180,11 +198,17 @@
 			files = (
 				6F6593F62944E34900DCE068 /* AllImageViewModel.swift in Sources */,
 				6F6593F12944E23A00DCE068 /* AllImageView.swift in Sources */,
+				6F6593FB2945C22500DCE068 /* AccountViewModel.swift in Sources */,
 				6F6593EF2944E1A800DCE068 /* AccountView.swift in Sources */,
 				6F6593E12944DF5A00DCE068 /* ContentView.swift in Sources */,
+				6F6593FD2945C28400DCE068 /* Account.swift in Sources */,
 				6F6593F42944E25100DCE068 /* Global.swift in Sources */,
+				6F6594012945C86800DCE068 /* ReportViewModel.swift in Sources */,
 				6F6593DF2944DF5A00DCE068 /* ReportManageApp.swift in Sources */,
+				6F6594052945C93600DCE068 /* ReportDetail.swift in Sources */,
+				6F6593FF2945C85A00DCE068 /* ReportView.swift in Sources */,
 				6F6593F92944E3BD00DCE068 /* ImageDetail.swift in Sources */,
+				6F6594032945C8DF00DCE068 /* Report.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

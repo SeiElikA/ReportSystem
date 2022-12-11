@@ -8,8 +8,29 @@
 import SwiftUI
 
 struct AccountView: View {
+    @StateObject private var model = AccountViewModel()
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            if !model.isLoading {
+                Table(model.accountList, selection: $model.selectionId) {
+                    TableColumn("ID") {
+                        Text("\($0.id)")
+                    }
+                    TableColumn("Name", value: \.name)
+                    TableColumn("Email", value: \.email)
+                    TableColumn("Password", value: \.password)
+                }
+                .onChange(of: model.selectionId, perform: { id in
+                    
+                })
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            model.fetchAccountList()
+        }
     }
 }
 
