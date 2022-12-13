@@ -50,10 +50,12 @@ class ReportViewModel: ObservableObject {
                                 self.filterList = reportList
                                 self.selectDate = "All"
                                 self.selectAccount = "All"
-                                self.allAccountList.append("All")
-                                self.allDateList.append("All")
                                 reportList.map({$0.account.name}).forEach({self.allAccountList.append($0)})
+                                self.allAccountList = Array(Set(self.allAccountList))
                                 reportList.map({$0.dateTime}).forEach({self.allDateList.append($0)})
+                                self.allDateList = Array(Set(self.allDateList))
+                                self.allDateList.insert("All", at: 0)
+                                self.allAccountList.insert("All", at: 0)
                                 self.isLoading = false
                             }
                         }

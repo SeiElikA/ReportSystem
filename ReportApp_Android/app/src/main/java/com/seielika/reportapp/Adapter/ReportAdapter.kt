@@ -1,6 +1,7 @@
 package com.seielika.reportapp.Adapter
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.Glide
 import com.seielika.reportapp.Data.ReportContent
 import com.seielika.reportapp.Global
+import com.seielika.reportapp.View.ReportDetailActivity
 import com.seielika.reportapp.databinding.ItemImgBinding
 import com.seielika.reportapp.databinding.ItemReportContentBinding
 import java.time.LocalDate
@@ -60,6 +62,9 @@ class ReportAdapter(var context: Context, var list: List<ReportContent>): BaseAd
                 .into(img.root)
         }
 
+        control.root.setOnClickListener {
+            context.startActivity(Intent(context, ReportDetailActivity::class.java).putExtra("data", data))
+        }
 
         return control.root
     }

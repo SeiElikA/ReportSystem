@@ -28,15 +28,28 @@ class MainActivity : AppCompatActivity() {
     private lateinit var model: MainModel
     private lateinit var adapter: ReportAdapter
 
+    companion object {
+        var instance: MainActivity? = null
+    }
+
+    fun refreshView() {
+        fetchData()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         title = "Report"
         model = MainModel()
+        instance = this
 
         binding.root.setOnRefreshListener {
             fetchData()
+        }
+
+        binding.btnAddReport.setOnClickListener {
+            startActivity(Intent(this, AddReportActivity::class.java))
         }
 
         fetchData()

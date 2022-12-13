@@ -8,6 +8,6 @@
 import Foundation
 
 class Global {
-    public static let baseUrl = "http://127.0.0.1:3000/api/"
-    //public static let baseUrl = "https://reportapi.kaijun.site/api/"
+    //public static let baseUrl = "http://127.0.0.1:3000/api/"
+    public static let baseUrl = "https://reportapi.kaijun.site/api/"
 }

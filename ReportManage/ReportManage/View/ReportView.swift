@@ -42,7 +42,7 @@ struct ReportView: View {
                         })
                         
                         List {
-                            ForEach(model.filterList.map({$0.dateTime}), id: \.self, content: { datetime in
+                            ForEach(Array(Set(model.filterList.map({$0.dateTime}))), id: \.self, content: { datetime in
                                 Section(datetime) {
                                     ForEach(model.filterList.filter({$0.dateTime == datetime})) { report in
                                         VStack {
