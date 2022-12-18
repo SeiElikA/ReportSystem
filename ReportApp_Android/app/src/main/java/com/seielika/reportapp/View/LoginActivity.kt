@@ -11,6 +11,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import com.google.gson.Gson
 import com.seielika.reportapp.Data.ErrorResponse
 import com.seielika.reportapp.Data.LoginResponse
@@ -34,6 +35,10 @@ class LoginActivity : AppCompatActivity() {
 
         title = "Login"
         model = LoginModel()
+        if(getSharedPreferences("User", Context.MODE_PRIVATE).getBoolean("isAdmin", false)) {
+            startActivity(Intent(this, AdminActivity::class.java))
+            this.finish()
+        }
         if(getSharedPreferences("User", Context.MODE_PRIVATE).getBoolean("isLogin", false)) {
             startActivity(Intent(this, MainActivity::class.java))
             this.finish()
@@ -50,6 +55,17 @@ class LoginActivity : AppCompatActivity() {
             if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 showErrorAlert("Email format not confirm")
                 return@setOnClickListener
+            }
+
+            // set admin login
+            if(email == "admin@mail.com" && password == "pwd160414") {
+                Toast.makeText(this@LoginActivity, "Welcome Admin Login", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, AdminActivity::class.java))
+                val sharedPreferences = getSharedPreferences("User", Context.MODE_PRIVATE)
+                sharedPreferences.edit {
+                    putBoolean("isAdmin", true)
+                }
+                this.finish()
             }
 
             // progress view

@@ -39,7 +39,7 @@ class ReportAdapter(var context: Context, var list: List<ReportContent>): BaseAd
         val data = list.get(position)
         if(data.dateTime != LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))) {
             control.cardPoint.setStrokeColor(ColorStateList.valueOf(Color.GRAY))
-            control.cardPoint.setStrokeColor(ColorStateList.valueOf(Color.GRAY))
+            control.layoutLine.setBackgroundColor(Color.GRAY)
             control.cardCorrectDate.isGone = true
         }
 
