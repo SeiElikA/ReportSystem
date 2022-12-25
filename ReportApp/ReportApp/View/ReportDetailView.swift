@@ -15,6 +15,11 @@ struct ReportDetailView: View {
             Section("Work Items") {
                 ForEach(reportContent.reportDetail, content: { report in
                     Text("\((reportContent.reportDetail.firstIndex(of: report) ?? 0) + 1). \(report.content)")
+                        .contextMenu(ContextMenu(menuItems: {
+                            Button("Copy") {
+                                UIPasteboard.general.string = report.content
+                            }
+                        }))
                 })
             }
             

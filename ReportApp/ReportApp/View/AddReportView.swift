@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 import PhotosUI
 
 struct AddReportView: View {
@@ -21,7 +22,16 @@ struct AddReportView: View {
                 } else {
                     ForEach(model.todayWorkItemList, id: \.self, content: { item in
                         Text("\((model.todayWorkItemList.firstIndex(of: item) ?? 0) + 1). \(item)")
-                    }).onDelete(perform: model.removeWorkItem(indexSet:))
+                            .contextMenu(ContextMenu(menuItems: {
+                                Button("Copy") {
+                                    UIPasteboard.general.string = item
+                                }
+                            }))
+                    })
+                    .onDelete(perform: model.removeWorkItem(indexSet:))
+                    .onMove(perform: { from, to in
+                        model.todayWorkItemList.move(fromOffsets: from, toOffset:to)
+                    })
                 }
             })
             
@@ -96,6 +106,9 @@ struct AddReportView: View {
                     }
                 }
             }
+        })
+        .toolbar(content: {
+            EditButton()
         })
     }
 }

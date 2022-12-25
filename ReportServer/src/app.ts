@@ -271,9 +271,43 @@ app.get('/api/getLowTaskAccount', async (req, res) => {
     return res.send(content)
 })
 
-app.get('/api/getTodayReport', async (req, res) => {
-
+app.get("/api/getDetectMode", (req, res) => {
+    createLowTaskJsonFile()
+    return res.send({
+        "mode": JSON.parse(fs.readFileSync("./lowTask.json").toString()).mode
+    })
 })
+
+app.get('/api/getTodayReport', async (req, res) => {
+    let list = (await prisma.reportContent.findMany({
+        where: {
+            dateTime: moment().format("yyyy-MM-DD")
+        },
+        orderBy: [
+            {
+                accountId: 'asc'
+            }
+        ],
+        select: {
+            account: true,
+            reportDetail: true,
+            imageDetail: true
+        }
+    }))
+    return res.send(list)
+})
+
+app.get('/api/getAccount', async (req, res) => {
+    let accountNameList = await prisma.account.findMany({
+        select: {
+            name: true
+        }
+    })
+
+    // TODO: (FIX) send low task account, need use account id, but response only send account name
+    res.send(accountNameList.map(x=>x.name))
+})
+
 
 async function saveImg(reportId: number, x: UploadedFile) {
     let newPath = imgStorage + `/${randomUUID()}.jpg`
@@ -289,6 +323,7 @@ async function saveImg(reportId: number, x: UploadedFile) {
     })
 }
 
+
 function createLowTaskJsonFile() {
     let date = new Date()
     if (!existsSync("./lowTask.json")) {
@@ -300,8 +335,11 @@ function createLowTaskJsonFile() {
     }
 }
 
+
 setInterval(async () => {
     if (moment().format("HH:mm") != "23:00") {
+        let allAccount = await prisma.account.findMany();
+
         let list = (await prisma.reportContent.findMany({
             where: {
                 dateTime: moment().format("yyyy-MM-DD")
@@ -315,9 +353,14 @@ setInterval(async () => {
                 account: true,
                 reportDetail: true
             }
-        }))
+        }));
 
-        // if all account in system not report task
+        // 篩選出沒有回報的帳號
+        list.forEach(x => {
+            allAccount = allAccount.filter(z => z.name != x.account.name);
+        });
+
+        // 如果全部人都沒有回報
         if (list.length == 0) {
             await discordClient.execute({
                 "embeds": [
@@ -340,29 +383,28 @@ setInterval(async () => {
         let dataList = list.map(x => {
             return {
                 "name": x.account.name,
-                "value": x.reportDetail.map(z => z.content).join("\n"),
+                "value": x.reportDetail.map((z, key) => (key + 1) + "." + z.content).join("\n　"),
                 "inline": false
-            }
-        })
+            };
+        });
 
-        // sort report task count with all account
-        list.sort(x => x.reportDetail.length)
+        // 取項目最低的帳號為進度最低(自動模式)
+        list.sort(x => x.reportDetail.length);
 
+        let msg = `\`\`\`${moment().format("yyyy/MM/DD")} 進度統計\`\`\``;
+        dataList.forEach((data) => {
+            msg += `\`\`\`diff\n+${data.name}\n今日進度：\n　${data.value}\`\`\``;
+        });
 
-        dataList.push({
-            "name": "**本日進度最低**",
-            "value": `**${list[list.length - 1].account.name}**`,
-            "inline": false
-        })
+        if (allAccount.length != 0) { // 如果有兩個以上沒回報
+            msg += `\`\`\`diff\n-本日進度最低-\n${allAccount.map(x => x.name).join(",")}\`\`\``;
+        }
+        else { // 正常取得進度最低
+            msg += `\`\`\`diff\n-本日進度最低-\n${list[list.length - 1].account.name}\`\`\``;
+        }
 
         await discordClient.execute({
-            "embeds": [
-                {
-                    "title": `${moment().format("yyyy/MM/DD")}今日進度`,
-                    "color": 15258703,
-                    "fields": dataList
-                }
-            ]
+            "content": msg,
         })
     }
 
