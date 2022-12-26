@@ -26,7 +26,7 @@ app.use(fileUpload({
 app.use(express.json())
 
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     res.send('<h1>Report Server</h1>');
 });
 

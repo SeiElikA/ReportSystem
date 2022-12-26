@@ -55,9 +55,9 @@ app.use((0, express_fileupload_1.default)({
     tempFileDir: '/tmp/'
 }));
 app.use(express_1.default.json());
-app.get('/', (req, res) => {
+app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send('<h1>Report Server</h1>');
-});
+}));
 app.post('/api/signUp', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let email = req.body["email"];
     let password = req.body["password"];
@@ -234,6 +234,7 @@ function saveImg(reportId, x) {
 }
 setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     if ((0, moment_1.default)().format("HH:mm") == "23:00") {
+        let allAccount = yield prisma.account.findMany();
         let list = (yield prisma.reportContent.findMany({
             where: {
                 dateTime: (0, moment_1.default)().format("yyyy-MM-DD")
@@ -248,6 +249,9 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
                 reportDetail: true
             }
         }));
+        list.forEach(x => {
+            allAccount = allAccount.filter(z => z.name != x.account.name);
+        });
         if (list.length == 0) {
             yield discordClient.execute({
                 "embeds": [
@@ -255,8 +259,8 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
                         "title": `${(0, moment_1.default)().format("yyyy/MM/DD")}今日進度`,
                         "color": 15258703,
                         "fields": {
-                            "name": "全部人",
-                            "value": "都沒進度",
+                            "name": "**全部人**",
+                            "value": "**都沒進度**",
                             "inline": false
                         }
                     }
@@ -267,24 +271,23 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         let dataList = list.map(x => {
             return {
                 "name": x.account.name,
-                "value": x.reportDetail.map(z => z.content).join("\n"),
+                "value": x.reportDetail.map((z, key) => (key + 1) + "." + z.content).join("\n　"),
                 "inline": false
             };
         });
         list.sort(x => x.reportDetail.length);
-        dataList.push({
-            "name": "**本日進度最低**",
-            "value": `**${list[list.length - 1].account.name}**`,
-            "inline": false
+        let msg = "\`\`\`2022/10/14 進度統計\`\`\`";
+        dataList.forEach((data) => {
+            msg += `\`\`\`diff\n+${data.name}\n今日進度：\n　${data.value}\`\`\``;
         });
+        if (allAccount.length != 0) {
+            msg += `\`\`\`diff\n-本日進度最低-\n${allAccount.map(x => x.name).join(",")}\`\`\``;
+        }
+        else {
+            msg += `\`\`\`diff\n-本日進度最低-\n${list[list.length - 1].account.name}\`\`\``;
+        }
         yield discordClient.execute({
-            "embeds": [
-                {
-                    "title": `${(0, moment_1.default)().format("yyyy/MM/DD")}今日進度`,
-                    "color": 15258703,
-                    "fields": dataList
-                }
-            ]
+            "content": msg,
         });
     }
 }), 55 * 1000);

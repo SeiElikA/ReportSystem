@@ -46,6 +46,9 @@ class ReportViewModel: ObservableObject {
                     if let reportList = try? JSONDecoder().decode([Report].self, from: data) {
                         DispatchQueue.main.async {
                             withAnimation {
+                                let dateFormatter = DateFormatter()
+                                dateFormatter.dateFormat = "yyyy-MM-dd"
+                                
                                 self.reportList = reportList
                                 self.filterList = reportList
                                 self.selectDate = "All"
@@ -54,6 +57,7 @@ class ReportViewModel: ObservableObject {
                                 self.allAccountList = Array(Set(self.allAccountList))
                                 reportList.map({$0.dateTime}).forEach({self.allDateList.append($0)})
                                 self.allDateList = Array(Set(self.allDateList))
+                                self.allDateList = self.allDateList.sorted(by: {dateFormatter.date(from: $0)! > dateFormatter.date(from: $1)!})
                                 self.allDateList.insert("All", at: 0)
                                 self.allAccountList.insert("All", at: 0)
                                 self.isLoading = false
@@ -72,6 +76,8 @@ class ReportViewModel: ObservableObject {
             filterList = reportList.filter({$0.dateTime == selectDate })
         } else if selectDate == "All" {
             filterList = reportList.filter({$0.account.name == selectAccount })
+        } else {
+            filterList = reportList.filter({$0.account.name == selectAccount && $0.dateTime == selectDate})
         }
     }
 }
