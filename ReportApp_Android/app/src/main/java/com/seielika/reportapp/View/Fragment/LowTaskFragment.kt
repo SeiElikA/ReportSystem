@@ -9,9 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isGone
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.seielika.reportapp.Adapter.AdminReportAdapter
+import com.seielika.reportapp.Data.Account
 import com.seielika.reportapp.Data.AdminReport
 import com.seielika.reportapp.Data.ErrorResponse
 import com.seielika.reportapp.Model.AdminModel
@@ -27,7 +29,9 @@ import kotlin.concurrent.thread
 class LowTaskFragment : Fragment() {
     private lateinit var control: FragmentLowTaskBinding
     private lateinit var model: AdminModel
-    private var accountList = listOf<String>()
+    private var lastUpdate = ""
+    private var accountName = ""
+    private var accountList = listOf<Account>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,10 +66,36 @@ class LowTaskFragment : Fragment() {
             progressDialog.setCancelable(false)
             progressDialog.show()
 
-            // TODO: (FIX) send low task account, need use account id, but response only has account name
-            // val accountId = accountList.firstOrNull { x-> x == } control.spAccount.text
+            val accountId = accountList.firstOrNull { x-> x.name == control.spAccount.text.toString() }?.id ?: -1
 
-            model.setLowTaskAccount()
+            if(accountId == -1) {
+                return@setOnClickListener
+            }
+
+            model.setLowTaskAccount(accountId, object: Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    activity?.runOnUiThread {
+                        showErrorAlert(e.message.toString())
+                        progressDialog.dismiss()
+                    }
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if(response.code !in 200..299) {
+                        val error = Gson().fromJson(response.body?.string(), ErrorResponse::class.java)
+                        activity?.runOnUiThread {
+                            progressDialog.dismiss()
+                            showErrorAlert(error.error)
+                        }
+                        return
+                    }
+
+                    activity?.runOnUiThread {
+                        progressDialog.dismiss()
+                        showSuccessfulAlert("Set low task account successful")
+                    }
+                }
+            })
         }
     }
 
@@ -100,8 +130,14 @@ class LowTaskFragment : Fragment() {
                     return
                 }
 
-                val detectMode = JSONObject(response.body?.string()).getInt("mode")
+                val data = JSONObject(response.body?.string())
+                val detectMode = data.getInt("mode")
+                this@LowTaskFragment.lastUpdate = data.getString("dateTime")
+                this@LowTaskFragment.accountName = data.getString("name")
+
                 activity?.runOnUiThread {
+                    control.txtLastUpdate.text = "Last report date: $lastUpdate\nlow task account: $accountName"
+
                     if(detectMode == 0) {
                         control.root.transitionToState(R.id.end, 0)
                         control.root.setTransitionDuration(500)
@@ -129,10 +165,10 @@ class LowTaskFragment : Fragment() {
                 loadingProcess.add(true)
                 activity?.let {
                     it.runOnUiThread {
-                        val nameList = Gson().fromJson(response.body?.string(), Array<String>::class.java).toList()
+                        val nameList = Gson().fromJson(response.body?.string(), Array<Account>::class.java).toList()
                         this@LowTaskFragment.accountList = nameList
-                        control.spAccount.setAdapter(ArrayAdapter(it, android.R.layout.simple_list_item_1, nameList))
-                        control.spAccount.setText(nameList.first(), false)
+                        control.spAccount.setAdapter(ArrayAdapter(it, android.R.layout.simple_list_item_1, nameList.map { x->x.name }.toList()))
+                        control.spAccount.setText(nameList.first().name, false)
                     }
                 }
             }
@@ -153,6 +189,11 @@ class LowTaskFragment : Fragment() {
                 activity?.let {
                     it.runOnUiThread {
                         val reportList = Gson().fromJson(response.body?.string(), Array<AdminReport>::class.java).toList()
+                        if(reportList.isNotEmpty()) {
+                            control.listView.isGone = false
+                            control.layoutNotReport.isGone = true
+                        }
+
                         control.listView.adapter = AdminReportAdapter(it, reportList)
                     }
                 }
@@ -215,6 +256,20 @@ class LowTaskFragment : Fragment() {
                 .create()
             alertDialog.show()
         }
+    }
+
+    private fun showSuccessfulAlert(msg: String) {
+        context?.let {
+            val alertDialog = AlertDialog.Builder(it)
+                .setTitle("Successful")
+                .setMessage(msg)
+                .setPositiveButton("Confirm") { _, _ ->
+
+                }
+                .create()
+            alertDialog.show()
+        }
+
     }
 
     companion object {

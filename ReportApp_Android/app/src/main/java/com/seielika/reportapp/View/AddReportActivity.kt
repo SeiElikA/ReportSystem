@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.forEachIndexed
 import androidx.core.view.isGone
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson

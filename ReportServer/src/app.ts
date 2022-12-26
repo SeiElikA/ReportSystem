@@ -12,10 +12,10 @@ import {LowTask} from "../dist/lowTask";
 import {monitorEventLoopDelay} from "perf_hooks";
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 const prisma = new PrismaClient()
-const discordClient = new DiscordWebhook('https://discord.com/api/webhooks/1054036115222437998/soLJ_fgy4VxlDJmZajNWmYeoz8ZBzLX9vocoCIEOmBdDbrSAxgVpH0IOOZm7t5_ekqw9');
+const discordClient = new DiscordWebhook('');
 const imgStorage = "img"
 
 app.use('/api/img', express.static(imgStorage));
@@ -229,7 +229,7 @@ app.post('/api/setLowTaskAccount', async (req, res) => {
 
     let content = JSON.parse(fs.readFileSync("./lowTask.json").toString()) as LowTask
     content.accountId = id
-    content.date = moment().format("")
+    content.date = moment().format("yyyy/MM/DD HH:mm:ss")
     fs.writeFileSync('./lowTask.json', JSON.stringify(content, null, 4))
 
     res.send({
@@ -271,10 +271,21 @@ app.get('/api/getLowTaskAccount', async (req, res) => {
     return res.send(content)
 })
 
-app.get("/api/getDetectMode", (req, res) => {
+app.get("/api/getDetectMode", async (req, res) => {
     createLowTaskJsonFile()
+
+    let data = JSON.parse(fs.readFileSync("./lowTask.json").toString())
+
+    let accountName = await prisma.account.findFirst({
+        where: {
+            id:data.accountId
+        }
+    })
+
     return res.send({
-        "mode": JSON.parse(fs.readFileSync("./lowTask.json").toString()).mode
+        "mode": data.mode,
+        "dateTime": data.date,
+        "name": accountName?.name ?? "null"
     })
 })
 
@@ -300,12 +311,12 @@ app.get('/api/getTodayReport', async (req, res) => {
 app.get('/api/getAccount', async (req, res) => {
     let accountNameList = await prisma.account.findMany({
         select: {
+            id: true,
             name: true
         }
     })
 
-    // TODO: (FIX) send low task account, need use account id, but response only send account name
-    res.send(accountNameList.map(x=>x.name))
+    res.send(accountNameList)
 })
 
 
@@ -337,7 +348,7 @@ function createLowTaskJsonFile() {
 
 
 setInterval(async () => {
-    if (moment().format("HH:mm") != "23:00") {
+    if (moment().format("HH:mm") == "23:00") {
         let allAccount = await prisma.account.findMany();
 
         let list = (await prisma.reportContent.findMany({
@@ -396,19 +407,33 @@ setInterval(async () => {
             msg += `\`\`\`diff\n+${data.name}\n今日進度：\n　${data.value}\`\`\``;
         });
 
-        if (allAccount.length != 0) { // 如果有兩個以上沒回報
-            msg += `\`\`\`diff\n-本日進度最低-\n${allAccount.map(x => x.name).join(",")}\`\`\``;
-        }
-        else { // 正常取得進度最低
-            msg += `\`\`\`diff\n-本日進度最低-\n${list[list.length - 1].account.name}\`\`\``;
+        // 讀取設定json
+        let settingData = JSON.parse(fs.readFileSync("./lowTask.json").toString())
+
+        // mode 0 is auto, mode 1 is manual
+        if(settingData.mode != 0 && settingData.accountId != 0) {
+            let accountName = (await prisma.account.findFirst( {
+                where: {
+                    id: settingData.accountId
+                }
+            }))?.name ?? "null"
+            msg += `\`\`\`diff\n-本日進度最低-\n${accountName}\`\`\``;
+        } else {
+            if (allAccount.length != 0) { // 如果有兩個以上沒回報
+                msg += `\`\`\`diff\n-本日進度最低-\n${allAccount.map(x => x.name).join(",")}\`\`\``;
+            }
+            else { // 正常取得進度最低
+                msg += `\`\`\`diff\n-本日進度最低-\n${list[list.length - 1].account.name}\`\`\``;
+            }
         }
 
         await discordClient.execute({
-            "content": msg,
+            "content": msg
         })
     }
 
-}, 5 * 1000)
+}, 55 * 1000)
+
 
 app.listen(port, () => {
     console.log(`server is listening on ${port}`);

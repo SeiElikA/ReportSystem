@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         // fetch report content
         // progress view
         val progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Register...")
+        progressDialog.setMessage("Loading...")
         progressDialog.setCancelable(false)
         progressDialog.show()
 
