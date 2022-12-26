@@ -8,8 +8,8 @@ import fileUpload, {UploadedFile} from "express-fileupload";
 import {exists, existsSync, mkdirSync} from "fs";
 import * as fs from "fs";
 import {randomUUID} from "crypto";
-import {LowTask} from "../dist/lowTask";
 import {monitorEventLoopDelay} from "perf_hooks";
+import {LowTask} from "./lowTask";
 
 const app = express();
 const port = 3001;
