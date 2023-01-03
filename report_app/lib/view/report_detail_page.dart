@@ -6,6 +6,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:report_app/data/report.dart';
 import 'package:report_app/utils/utils.dart';
 
+import '../component/test.dart';
 import '../global.dart';
 
 class ReportDetailPage extends StatefulWidget {
@@ -28,90 +29,95 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
         title: const Text("Report Detail"),
       ),
       body: SafeArea(
-        child: Column(children: [
-          CupertinoFormSection.insetGrouped(
-              header: Text("    Work items".toUpperCase()),
-              children: widget.report.reportDetail
-                  .map((e) => itemDetail(
-                      "${widget.report.reportDetail.indexOf(e) + 1}. ${e.content}"))
-                  .toList()),
-          if (widget.report.imageDetail.isNotEmpty) ...{
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(children: [
             CupertinoFormSection.insetGrouped(
-                header: Text("    Images".toUpperCase()),
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: widget.report.imageDetail
-                              .map((e) => Padding(
-                            padding: const EdgeInsets.only(
-                                top: 4, bottom: 4, right: 12.0),
-                            child: CupertinoContextMenu(
-                              actions: [
-                                CupertinoContextMenuAction(
-                                  child: Text("Save"),
-                                  trailingIcon: CupertinoIcons.cloud_download,
-                                  onPressed: () {},
-                                )
-                              ],
-                              child: Material(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius:
-                                      BorderRadius.circular(8)),
-                                  clipBehavior: Clip.antiAlias,
-                                  child: InkWell(
-                                    onTap: () {
-                                      imageClick(baseUrl + e.imgPath);
-                                    },
-                                    child: Hero(
-                                      tag: baseUrl + e.imgPath,
-                                      child: Image.network(
-                                          baseUrl + e.imgPath,
-                                          width: 140,
-                                          height: 140,
-                                          fit: BoxFit.cover),
+                header: Text("    Work items".toUpperCase()),
+                children: widget.report.reportDetail
+                    .map((e) => itemDetail(
+                        "${widget.report.reportDetail.indexOf(e) + 1}. ${e.content}"))
+                    .toList()),
+            if (widget.report.imageDetail.isNotEmpty) ...{
+              CupertinoFormSection.insetGrouped(
+                  header: Text("    Images".toUpperCase()),
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: widget.report.imageDetail
+                                .map((e) => Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 4, bottom: 4, right: 12.0),
+                              child: CupertinoContextMenu(
+                                actions: [
+                                  CupertinoContextMenuAction(
+                                    child: Text("Save"),
+                                    trailingIcon: CupertinoIcons.cloud_download,
+                                    onPressed: () {},
+                                  )
+                                ],
+                                child: Material(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(8)),
+                                    clipBehavior: Clip.antiAlias,
+                                    child: InkWell(
+                                      onTap: () {
+                                        imageClick(baseUrl + e.imgPath);
+                                      },
+                                      child: Hero(
+                                        tag: baseUrl + e.imgPath,
+                                        child: Image.network(
+                                            baseUrl + e.imgPath,
+                                            width: 140,
+                                            height: 140,
+                                            fit: BoxFit.cover),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ))
-                              .toList(),
+                            ))
+                                .toList(),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ])
-          },
-          CupertinoFormSection.insetGrouped(
-              header: Text("    Date".toUpperCase()),
-              children: [
-                CupertinoFormRow(
-                  prefix: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(widget.report.dateTime),
-                  ),
-                  child: SizedBox(),
-                )
-              ]),
-        ]),
+                  ])
+            },
+            CupertinoFormSection.insetGrouped(
+                header: Text("    Date".toUpperCase()),
+                children: [
+                  CupertinoFormRow(
+                    prefix: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text(widget.report.dateTime),
+                    ),
+                    child: SizedBox(),
+                  )
+                ]),
+          ]),
+        ),
       ),
     );
   }
 
   Widget itemDetail(String workItem) {
     return InkWell(
-      child: CupertinoFormRow(
-        prefix: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(workItem),
+      child: MyCupertinoFormRow(
+        prefix: Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(workItem)
+          ),
         ),
-        child: const SizedBox(),
+        child: const SizedBox(width: 1,),
       ),
       onTap: () async {
         await Clipboard.setData(ClipboardData(text: workItem.split(". ")[1]));

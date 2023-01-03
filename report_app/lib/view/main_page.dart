@@ -89,7 +89,7 @@ class _MainPageState extends State<MainPage> {
                               .textTheme
                               .titleMedium
                               ?.copyWith(
-                                  fontSize: 24, fontWeight: FontWeight.w600),
+                                  fontSize: 28, fontWeight: FontWeight.w600),
                         )),
                     actions: [logoutButton()],
                   ),
@@ -129,14 +129,22 @@ class _MainPageState extends State<MainPage> {
   }
 
   reportList() {
-    if (mainModel.reportList.isEmpty) {
+    if (mainModel.isLoading) {
+      return Center(
+          child: LoadingIndicator(
+            indicatorType: Indicator.ballClipRotateMultiple,
+            colors: [Theme.of(context).primaryColor],
+          ));
+    } else if (mainModel.reportList.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              "asserts/img_empty.png",
-              width: MediaQuery.of(context).size.width * 0.4,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Image.asset(
+                "asserts/img_empty.png",
+              ),
             ),
             const SizedBox(height: 16),
             Text("Click button to add your first report",
@@ -147,12 +155,6 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
       );
-    } else if (mainModel.isLoading) {
-      return Center(
-          child: LoadingIndicator(
-        indicatorType: Indicator.ballClipRotateMultiple,
-        colors: [Theme.of(context).primaryColor],
-      ));
     }
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -252,7 +254,7 @@ class _MainPageState extends State<MainPage> {
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SelectableText(
+                                Text(
                                     item.reportDetail
                                         .map((e) =>
                                             "${item.reportDetail.indexOf(e) + 1}. ${e.content}")
@@ -326,6 +328,30 @@ class _MainPageState extends State<MainPage> {
                             Navigator.of(context).pop();
                           }),
                       CupertinoButton(
+                          child: const Text(
+                            "Logout",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          onPressed: () async {
+                            await mainModel.logoutClick(context);
+                          }),
+                    ],
+                  );
+                });
+          } else {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text("Logout"),
+                    content: const Text("Do you want logout?"),
+                    actions: [
+                      TextButton(
+                          child: const Text("Cancel"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          }),
+                      TextButton(
                           child: const Text(
                             "Logout",
                             style: TextStyle(color: Colors.red),

@@ -12,7 +12,7 @@ import {monitorEventLoopDelay} from "perf_hooks";
 import {LowTask} from "./lowTask";
 
 const app = express();
-const port = 3001;
+const port = 3000;
 
 const prisma = new PrismaClient()
 const discordClient = new DiscordWebhook('');

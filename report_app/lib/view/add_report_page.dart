@@ -33,14 +33,7 @@ class _AddReportPageState extends State<AddReportPage> {
               title: Text("Add Report"),
             ),
             body: SafeArea(
-              child: OrientationBuilder(
-                builder: (context, orientation) {
-                  if (orientation == Orientation.landscape) {
-                    return horizontalView();
-                  }
-                  return verticalView();
-                },
-              ),
+              child: MediaQuery.of(context).orientation == Orientation.landscape ? horizontalView() : verticalView()
             ),
           );
         },
