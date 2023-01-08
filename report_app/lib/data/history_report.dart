@@ -1,24 +1,26 @@
+import 'package:report_app/data/account.dart';
 import 'package:report_app/data/image_detail.dart';
 import 'package:report_app/data/report_detail.dart';
 
-class Report {
+class HistoryReport {
   int id = 0;
   String dateTime = "";
+  Account? account;
   List<ReportDetail> reportDetail = [];
   List<ImageDetail> imageDetail = [];
-
-  Report(this.id, this.dateTime, this.reportDetail, this.imageDetail);
 
   Map<String, dynamic> toJson() => {
         'id': id,
         "dateTime": dateTime,
+        "account": account,
         "reportDetail": reportDetail,
         "imageDetail": imageDetail
       };
 
-  Report.fromJson(Map<String, dynamic> json)
+  HistoryReport.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         dateTime = json["dateTime"],
+        account = Account.fromJson(json["account"]),
         reportDetail = (json["reportDetail"] as List)
             .map((e) => ReportDetail.fromJson(e))
             .toList(),

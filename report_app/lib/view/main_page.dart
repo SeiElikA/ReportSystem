@@ -14,6 +14,7 @@ import 'package:report_app/provider/main_provider.dart';
 import 'package:report_app/theme/colorExt.dart';
 import 'package:report_app/view/add_report_page.dart';
 import 'package:report_app/view/mobile/main_page_mobile.dart';
+import 'package:report_app/view/report_history_page.dart';
 import 'package:report_app/view/tablet/main_page_tablet.dart';
 
 class MainPage extends StatefulWidget {
@@ -63,6 +64,11 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+        Theme.of(context).brightness == Brightness.dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark);
+
     return ChangeNotifierProvider(
       create: (_) => mainModel,
       child: Consumer<MainProvider>(builder: (context, value, builder) {
@@ -91,7 +97,7 @@ class _MainPageState extends State<MainPage> {
                               ?.copyWith(
                                   fontSize: 28, fontWeight: FontWeight.w600),
                         )),
-                    actions: [logoutButton()],
+                    actions: [reportHistoryButton(), logoutButton()],
                   ),
                 ];
               },
@@ -132,9 +138,9 @@ class _MainPageState extends State<MainPage> {
     if (mainModel.isLoading) {
       return Center(
           child: LoadingIndicator(
-            indicatorType: Indicator.ballClipRotateMultiple,
-            colors: [Theme.of(context).primaryColor],
-          ));
+        indicatorType: Indicator.ballClipRotateMultiple,
+        colors: [Theme.of(context).primaryColor],
+      ));
     } else if (mainModel.reportList.isEmpty) {
       return Center(
         child: Column(
@@ -219,7 +225,7 @@ class _MainPageState extends State<MainPage> {
             }
           ],
         ),
-        const SizedBox(width: 20),
+        const SizedBox(width: 12),
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,6 +297,7 @@ class _MainPageState extends State<MainPage> {
                                 )
                               ]),
                         ),
+                        const SizedBox(width: 8),
                         const RotatedBox(
                             quarterTurns: 2,
                             child: Icon(
@@ -366,6 +373,18 @@ class _MainPageState extends State<MainPage> {
         },
         icon: Icon(
           Icons.logout_outlined,
+          color: Theme.of(context).primaryColor,
+        ));
+  }
+
+  reportHistoryButton() {
+    return IconButton(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const ReportHistoryPage()));
+        },
+        icon: Icon(
+          CupertinoIcons.doc_text,
           color: Theme.of(context).primaryColor,
         ));
   }

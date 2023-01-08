@@ -39,28 +39,26 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return  ChangeNotifierProvider(
-      create: (_) {
-        return themeChangeProvider;
-      },
-      child: Consumer<DarkThemeProvider>(
-        builder: (context, value, child) => MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: Styles.themeData(false, context),
-          darkTheme: Styles.themeData(true, context),
-          home: FutureBuilder<bool>(
-            future: isLogin(),
-            builder: (context, snapshot) {
-              if(snapshot.hasData) {
-                if(snapshot.data!) {
-                  return const MainPageAdapt();
-                }
-              }
-              return const LoginPage();
-            }
+    return ChangeNotifierProvider(
+        create: (_) {
+          return themeChangeProvider;
+        },
+        child: Consumer<DarkThemeProvider>(
+          builder: (context, value, child) => MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: Styles.themeData(false, context),
+            darkTheme: Styles.themeData(true, context),
+            home: FutureBuilder<bool>(
+                future: isLogin(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!) {
+                      return const MainPageAdapt();
+                    }
+                  }
+                  return const LoginPage();
+                }),
           ),
-        ),
-      )
-    );
+        ));
   }
 }

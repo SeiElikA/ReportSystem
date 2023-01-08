@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:report_app/data/report.dart';
 import 'package:report_app/utils/utils.dart';
 
@@ -45,45 +46,54 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
                     SizedBox(
                       width: double.infinity,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: widget.report.imageDetail
                                 .map((e) => Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 4, bottom: 4, right: 12.0),
-                              child: CupertinoContextMenu(
-                                actions: [
-                                  CupertinoContextMenuAction(
-                                    child: Text("Save"),
-                                    trailingIcon: CupertinoIcons.cloud_download,
-                                    onPressed: () {},
-                                  )
-                                ],
-                                child: Material(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(8)),
-                                    clipBehavior: Clip.antiAlias,
-                                    child: InkWell(
-                                      onTap: () {
-                                        imageClick(baseUrl + e.imgPath);
-                                      },
-                                      child: Hero(
-                                        tag: baseUrl + e.imgPath,
-                                        child: Image.network(
-                                            baseUrl + e.imgPath,
-                                            width: 140,
-                                            height: 140,
-                                            fit: BoxFit.cover),
+                                      padding: const EdgeInsets.only(
+                                          top: 4, bottom: 4, right: 12.0),
+                                      child: CupertinoContextMenu(
+                                        actions: [
+                                          CupertinoContextMenuAction(
+                                            child: Text("Save"),
+                                            trailingIcon:
+                                                CupertinoIcons.cloud_download,
+                                            onPressed: () {
+                                              saveImage(baseUrl + e.imgPath);
+                                              Navigator.of(context).pop();
+                                            },
+                                          )
+                                        ],
+                                        child: Material(
+                                          clipBehavior: Clip.hardEdge,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8)),
+                                            clipBehavior: Clip.antiAlias,
+                                            child: InkWell(
+                                              onTap: () {
+                                                imageClick(baseUrl + e.imgPath);
+                                              },
+                                              child: Hero(
+                                                tag: baseUrl + e.imgPath,
+                                                child: Image.network(
+                                                    baseUrl + e.imgPath,
+                                                    width: 140,
+                                                    height: 140,
+                                                    fit: BoxFit.cover),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ))
+                                    ))
                                 .toList(),
                           ),
                         ),
@@ -113,11 +123,12 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
       child: MyCupertinoFormRow(
         prefix: Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Text(workItem)
-          ),
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(workItem)),
         ),
-        child: const SizedBox(width: 1,),
+        child: const SizedBox(
+          width: 1,
+        ),
       ),
       onTap: () async {
         await Clipboard.setData(ClipboardData(text: workItem.split(". ")[1]));
@@ -136,24 +147,30 @@ class _ReportDetailPageState extends State<ReportDetailPage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  GallerySaver.saveImage(imgUrl).then((bool? success) {
-                    if (success == true) {
-                      showSuccessfulDialog(context, "Save Photo Successful");
-                      return;
-                    }
-
-                    showErrorDialog(context, "something wrong");
-                  });
+                  saveImage(imgUrl);
                 },
-                icon: Icon(Icons.download_outlined))
+                icon: const Icon(Icons.download_outlined))
           ],
         ),
         body: Center(
             child: Hero(
           tag: imgUrl,
-          child: Image.network(imgUrl),
+          child: PhotoView(
+            imageProvider: NetworkImage(imgUrl),
+          ),
         )),
       );
     }));
+  }
+
+  void saveImage(imgUrl) {
+    GallerySaver.saveImage(imgUrl).then((bool? success) {
+      if (success == true) {
+        showSuccessfulDialog(context, "Save Photo Successful");
+        return;
+      }
+
+      showErrorDialog(context, "something wrong");
+    });
   }
 }

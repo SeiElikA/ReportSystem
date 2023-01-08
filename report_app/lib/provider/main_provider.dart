@@ -10,11 +10,12 @@ class MainProvider extends ChangeNotifier {
   var reportList = <Report>[];
   var isLoading = false;
 
-  Future<void> setReportList(BuildContext context, {bool showLoading = true}) async {
+  Future<void> setReportList(BuildContext context,
+      {bool showLoading = true}) async {
     final accountId = (await SharedPreferences.getInstance()).getInt("id") ?? 0;
     final model = MainModel();
 
-    if(!showLoading) {
+    if (showLoading) {
       isLoading = true;
       notifyListeners();
     }
@@ -23,7 +24,7 @@ class MainProvider extends ChangeNotifier {
       reportList.clear();
       reportList = await model.getReportList(accountId);
       notifyListeners();
-    } catch(ex) {
+    } catch (ex) {
       showErrorDialog(context, ex.toString());
       isLoading = false;
       notifyListeners();
@@ -40,6 +41,8 @@ class MainProvider extends ChangeNotifier {
     final sharedPreference = await SharedPreferences.getInstance();
     sharedPreference.clear();
 
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const LoginPage()), (route) => false);
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+        (route) => false);
   }
 }
