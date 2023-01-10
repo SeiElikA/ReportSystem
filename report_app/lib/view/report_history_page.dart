@@ -44,62 +44,61 @@ class _ReportHistoryState extends State<ReportHistoryPage> {
       child: Consumer<ReportHistoryProvider>(
         builder: ((context, value, child) {
           return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios_new,
-                  color: Theme.of(context).primaryColor,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              title: Text(
-                "Report History",
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontSize: 28, fontWeight: FontWeight.w600),
-              ),
-              actions: [
-                IconButton(
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                leading: IconButton(
                   icon: Icon(
-                    CupertinoIcons.photo_on_rectangle,
+                    Icons.arrow_back_ios_new,
                     color: Theme.of(context).primaryColor,
                   ),
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const AllPhotoPage()));
+                    Navigator.of(context).pop();
                   },
-                )
-              ],
-            ),
-            backgroundColor: Theme.of(context).backgroundColor,
-            body: SafeArea(
-              child: RefreshIndicator(
-                  onRefresh: () async {
-                    await model.getAllData(context);
-                  },
-                  child: model.isLoading
-                      ? Center(child: loadingCircle())
-                      : (model.dataList.isEmpty
-                          ? const Center(child: Text("Report History Empty"))
-                          : Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12.0),
-                                  child: filterWidget(),
-                                ),
-                                Expanded(
-                                  child: Scrollbar(child: bodyList()),
-                                ),
-                              ],
-                            ))),
-            ),
-          );
+                ),
+                title: Text(
+                  "Report History",
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(fontSize: 28, fontWeight: FontWeight.w600),
+                ),
+                actions: [
+                  IconButton(
+                    icon: Icon(
+                      CupertinoIcons.photo_on_rectangle,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const AllPhotoPage()));
+                    },
+                  )
+                ],
+              ),
+              backgroundColor: Theme.of(context).backgroundColor,
+              body: SafeArea(
+                child: RefreshIndicator(
+                    onRefresh: () async {
+                      await model.getAllData(context);
+                    },
+                    child: model.isLoading
+                        ? Center(child: loadingCircle())
+                        : (model.dataList.isEmpty
+                            ? const Center(child: Text("Report History Empty"))
+                            : Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12.0),
+                                    child: filterWidget(),
+                                  ),
+                                  Expanded(
+                                    child: Scrollbar(child: bodyList()),
+                                  ),
+                                ],
+                              ))),
+              ));
         }),
       ),
     );
@@ -169,6 +168,7 @@ class _ReportHistoryState extends State<ReportHistoryPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Datetime
         Text(
           filterList.isEmpty
               ? "Null"
@@ -179,30 +179,13 @@ class _ReportHistoryState extends State<ReportHistoryPage> {
               ?.copyWith(fontSize: 24, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 4),
+        // Every one report content
         SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           child: IntrinsicHeight(
             child: Row(children: [
-              for (var data in filterList) ...{
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          data.account?.name ?? "Null",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontSize: 20),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Expanded(child: reportItemDetail(data))
-                    ])
-              },
+              for (var data in filterList) ...{reportItemDetail(data)},
             ]),
           ),
         ),
@@ -216,8 +199,7 @@ class _ReportHistoryState extends State<ReportHistoryPage> {
         value: model.dateTimeSelection,
         isExpanded: true,
         items: model.dropDownDateTimeList
-            .map((e) =>
-                DropdownMenuItem(value: e, child: Expanded(child: Text(e))))
+            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
             .toList(),
         onChanged: (value) async {
           setState(() {
@@ -232,8 +214,7 @@ class _ReportHistoryState extends State<ReportHistoryPage> {
         isExpanded: true,
         value: model.accountSelection,
         items: model.accountList
-            .map((e) =>
-                DropdownMenuItem(value: e, child: Expanded(child: Text(e))))
+            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
             .toList(),
         onChanged: (value) async {
           setState(() {
@@ -244,138 +225,157 @@ class _ReportHistoryState extends State<ReportHistoryPage> {
   }
 
   Widget filterWidget() {
-    if (MediaQuery.of(context).orientation == Orientation.landscape) {
-      return Row(
-        children: [
-          Expanded(child: accountFilterDropDownMenu()),
-          SizedBox(width: 12),
-          Expanded(child: dateFilterDropDownMenu()),
-          Expanded(flex: 2, child: SizedBox())
-        ],
-      );
-    } else {
-      return Row(
-        children: [
-          Expanded(child: accountFilterDropDownMenu()),
-          SizedBox(width: 12),
-          Expanded(child: dateFilterDropDownMenu())
-        ],
-      );
-    }
+    return Row(
+      children: [
+        Expanded(child: accountFilterDropDownMenu()),
+        const SizedBox(width: 12),
+        Expanded(child: dateFilterDropDownMenu()),
+        if (MediaQuery.of(context).orientation == Orientation.landscape) ...{
+          const Expanded(
+            flex: 2,
+            child: SizedBox(),
+          )
+        }
+      ],
+    );
   }
 
   reportItemDetail(HistoryReport item) {
-    return SizedBox(
-      width: 300,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        elevation: 4,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: () {
-            var report = Report(
-                item.id, item.dateTime, item.reportDetail, item.imageDetail);
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (builder) => ReportDetailPage(report: report)));
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                        item.reportDetail
-                            .map((e) =>
-                                "${item.reportDetail.indexOf(e) + 1}. ${e.content}")
-                            .toList()
-                            .join("\n"),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(fontSize: 18)),
-                    if (item.imageDetail.isNotEmpty) ...{
-                      const SizedBox(height: 8)
-                    },
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: item.imageDetail
-                            .map((e) => Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
-                                      clipBehavior: Clip.antiAlias,
-                                      child: Image.network(
-                                        baseUrl + e.imgPath,
-                                        width: 64,
-                                        height: 64,
-                                        fit: BoxFit.cover,
-                                        loadingBuilder:
-                                            (context, child, loadingProgress) {
-                                          if (loadingProgress == null) {
-                                            return child;
-                                          }
-                                          var loading = loadingProgress
-                                              .cumulativeBytesLoaded;
-                                          var total = loadingProgress
-                                                  .expectedTotalBytes ??
-                                              -1;
-                                          if (Platform.isAndroid) {
-                                            if (loading != -1 && total != -1) {
-                                              return Container(
-                                                  height: 64,
-                                                  width: 64,
-                                                  padding: EdgeInsets.all(16),
-                                                  decoration: BoxDecoration(
-                                                      color: Theme.of(context)
-                                                          .backgroundColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8)),
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    value: loading / total,
-                                                  ));
-                                            }
-                                            return Container(
-                                                height: 64,
-                                                width: 64,
-                                                padding: EdgeInsets.all(16),
-                                                decoration: BoxDecoration(
-                                                    color: Theme.of(context)
-                                                        .backgroundColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8)),
-                                                child:
-                                                    const CircularProgressIndicator());
-                                          } else {
-                                            return Container(
-                                                height: 64,
-                                                width: 64,
-                                                decoration: BoxDecoration(
-                                                    color: Theme.of(context)
-                                                        .backgroundColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8)),
-                                                child:
-                                                    const CupertinoActivityIndicator());
-                                          }
-                                        },
-                                      )),
-                                ))
-                            .toList(),
-                      ),
-                    )
-                  ]),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // name
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            item.account?.name ?? "Null",
+            style:
+                Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 20),
+          ),
+        ),
+
+        const SizedBox(height: 4),
+
+        // item content
+        Expanded(
+          child: SizedBox(
+            width: 300,
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              elevation: 4,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(10),
+                onTap: () {
+                  var report = Report(item.id, item.dateTime, item.reportDetail,
+                      item.imageDetail);
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (builder) => ReportDetailPage(report: report)));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            item.reportDetail
+                                .map((e) =>
+                                    "${item.reportDetail.indexOf(e) + 1}. ${e.content}")
+                                .toList()
+                                .join("\n"),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(fontSize: 18)),
+                        if (item.imageDetail.isNotEmpty) ...{
+                          const SizedBox(height: 8)
+                        },
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: item.imageDetail
+                                .map((e) => Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 8.0),
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                          clipBehavior: Clip.antiAlias,
+                                          child: Image.network(
+                                            baseUrl + e.imgPath,
+                                            width: 64,
+                                            height: 64,
+                                            fit: BoxFit.cover,
+                                            loadingBuilder: (context, child,
+                                                loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              var loading = loadingProgress
+                                                  .cumulativeBytesLoaded;
+                                              var total = loadingProgress
+                                                      .expectedTotalBytes ??
+                                                  -1;
+                                              if (Platform.isAndroid) {
+                                                if (loading != -1 &&
+                                                    total != -1) {
+                                                  return Container(
+                                                      height: 64,
+                                                      width: 64,
+                                                      padding:
+                                                          EdgeInsets.all(16),
+                                                      decoration: BoxDecoration(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .backgroundColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8)),
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        value: loading / total,
+                                                      ));
+                                                }
+                                                return Container(
+                                                    height: 64,
+                                                    width: 64,
+                                                    padding: EdgeInsets.all(16),
+                                                    decoration: BoxDecoration(
+                                                        color: Theme.of(context)
+                                                            .backgroundColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8)),
+                                                    child:
+                                                        const CircularProgressIndicator());
+                                              } else {
+                                                return Container(
+                                                    height: 64,
+                                                    width: 64,
+                                                    decoration: BoxDecoration(
+                                                        color: Theme.of(context)
+                                                            .backgroundColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8)),
+                                                    child:
+                                                        const CupertinoActivityIndicator());
+                                              }
+                                            },
+                                          )),
+                                    ))
+                                .toList(),
+                          ),
+                        )
+                      ]),
+                ),
+              ),
             ),
           ),
         ),
-      ),
+      ],
     );
   }
 

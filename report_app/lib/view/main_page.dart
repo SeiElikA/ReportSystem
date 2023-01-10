@@ -106,7 +106,9 @@ class _MainPageState extends State<MainPage> {
                     await mainModel.setReportList(context, showLoading: false);
                   },
                   child: SingleChildScrollView(
-                    child: reportList(),
+                    child: mainModel.reportList.isEmpty
+                        ? emptyView()
+                        : reportList(),
                   ))),
         );
       }),
@@ -134,6 +136,24 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
+  emptyView() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 80),
+          Image.asset("asserts/img_empty.png", width: 200),
+          const SizedBox(height: 16),
+          Text("Click button to add your first report",
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontSize: 18)),
+        ],
+      ),
+    );
+  }
+
   reportList() {
     if (mainModel.isLoading) {
       return Center(
@@ -141,26 +161,6 @@ class _MainPageState extends State<MainPage> {
         indicatorType: Indicator.ballClipRotateMultiple,
         colors: [Theme.of(context).primaryColor],
       ));
-    } else if (mainModel.reportList.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Image.asset(
-                "asserts/img_empty.png",
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text("Click button to add your first report",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(fontSize: 18))
-          ],
-        ),
-      );
     }
     return Padding(
       padding: const EdgeInsets.all(12.0),
